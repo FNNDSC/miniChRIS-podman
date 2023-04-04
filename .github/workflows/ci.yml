@@ -1,0 +1,41 @@
+# Test miniChRIS-k8s with miniChRIS-docker's test suite
+
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-podman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Start CUBE
+        run: ./podman/minichris.sh up
+
+      - name: Checkout miniChRIS-docker
+        uses: actions/checkout@v3
+        with:
+          repository: FNNDSC/miniChRIS-docker
+          path: ./miniChRIS-docker
+      - name: Test
+        run: |
+          set +e
+          ./miniChRIS-docker/test.sh
+          rc=$?
+          
+          # if tests fail, print out all logs
+          if [ "$rc" != '0' ]; then
+            set -x
+            for c in $(podman ps -a --format '{{ .Names }}' --filter 'name=minichris'); do
+              podman logs $c
+            done
+          fi
+
+          exit $rc
+      - name: Stop CUBE
+        run: ./podman/minichris.sh down
