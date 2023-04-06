@@ -77,7 +77,7 @@ function start_pfcon () {
 # Returns the lock file for the waiting process, refer to run_in_background
 function watch_for_logs () {
   wait_until_running $1
-  podman logs --follow $1
+  noisy_sh podman logs --follow $1
 }
 
 # Poll Podman until a container is running.
