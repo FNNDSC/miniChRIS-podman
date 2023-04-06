@@ -25,7 +25,7 @@ See also: https://github.com/FNNDSC/miniChRIS-docker
 
 ### System Requirements
 
-_miniChRIS-k8s_ requires Podman version 4.
+_miniChRIS-k8s_ requires Podman version 4.3 or above.
 We aim to support "out-of-the-box" setups of rootless Podman (using slirp4netns).
 
 Supported OS: Fedora, Arch Linux
