@@ -61,6 +61,12 @@ spec:
             - mountPath: /var/run/docker.sock
               name: podman-socket
 
+      # Let SELinux allow us to access the Podman socket
+      # https://unix.stackexchange.com/a/595152
+      securityContext:
+        seLinuxOptions:
+          type: spc_t
+
       volumes:
         - name: storebase
           persistentVolumeClaim:

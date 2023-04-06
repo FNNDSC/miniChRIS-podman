@@ -46,7 +46,8 @@ function minichris_chrisomatic () {
 
   noisy_sh podman run --rm $tty_flags \
     --pod $CUBE_POD \
-    -v "$HERE/chrisomatic.yml:/chrisomatic.yml:ro" \
+    --security-opt label=disable \
+    -v "\"$(realpath "$HERE")/chrisomatic.yml:/chrisomatic.yml:ro\"" \
     -v "$SOCK:/var/run/docker.sock:rw" \
     ghcr.io/fnndsc/chrisomatic:0.4.1 chrisomatic "$@"
 }
