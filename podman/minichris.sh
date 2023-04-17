@@ -59,6 +59,7 @@ function minichris_down () {
 function minichris_up () {
   start_cube
   start_pfcon
+  start_chrisui
   minichris_chrisomatic
 }
 
@@ -71,6 +72,11 @@ function start_cube () {
 function start_pfcon () {
   local hard_coded_sock=/run/user/1000/podman/podman.sock
   noisy_sh "sed \"s#$hard_coded_sock#$SOCK#\" $HERE/pfcon-podman.yml | podman kube play --replace -"
+}
+
+function start_chrisui () {
+  local hard_coded_sock=/run/user/1000/podman/podman.sock
+  noisy_sh "sed \"s#$hard_coded_sock#$SOCK#\" $HERE/chrisui-podman.yml | podman kube play --replace -"
 }
 
 # Follow the logs of a container which has not yet been created and/or started.
