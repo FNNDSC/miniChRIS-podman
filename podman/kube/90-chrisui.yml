@@ -10,8 +10,6 @@ metadata:
     app: minichris-chrisui
     app.kubernetes.io/component: frontend
     app.kubernetes.io/part-of: miniChRIS
-  annotations:
-    kubernetes.io/description: "chris ui app service"
 spec:
   replicas: 1
   selector:
@@ -25,7 +23,7 @@ spec:
     spec:
       containers:
         - name: chrisui
-          image: ghcr.io/fnndsc/chris_ui:20230413.240-61cd9942
+          image: ghcr.io/fnndsc/chris_ui:20230418.240-9dca09b4
           args: ["sirv", "--host", "--single"]
           ports:
           - containerPort: 3000
