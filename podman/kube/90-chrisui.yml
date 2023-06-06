@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: chrisui
-          image: ghcr.io/fnndsc/chris_ui:20230418.240-9dca09b4
+          image: ghcr.io/fnndsc/chris_ui:20230523.257-cbc71ea8
           args: ["sirv", "--host", "--single"]
           ports:
           - containerPort: 3000

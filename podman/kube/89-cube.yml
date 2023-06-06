@@ -35,7 +35,7 @@ spec:
     spec:
       initContainers:
         - name: migratedb
-          image: ghcr.io/fnndsc/cube:4.0.0.pre7
+          image: ghcr.io/fnndsc/cube:4.0.0.pre12
           command:
             - sh
             - -c
@@ -45,11 +45,13 @@ spec:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-            - configMapRef:
-                name: minichris-docker-swift-onlyone-config
+          volumeMounts:
+            - mountPath: /var/chris
+              name: file-storage
+          
       containers:
         - name: server
-          image: ghcr.io/fnndsc/cube:4.0.0.pre7
+          image: ghcr.io/fnndsc/cube:4.0.0.pre12
           ports:
             - name: http
               containerPort: 8000
@@ -58,42 +60,61 @@ spec:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-            - configMapRef:
-                name: minichris-docker-swift-onlyone-config
           env:
             - name: DJANGO_COLLECTSTATIC
               value: "on"
+          volumeMounts:
+            - mountPath: /var/chris
+              name: file-storage
 
         - name: cube-worker
-          image: ghcr.io/fnndsc/cube:4.0.0.pre7
+          image: ghcr.io/fnndsc/cube:4.0.0.pre12
           command: ["celery", "-A", "core", "worker", "-c", "4", "-l", "info", "-Q", "main1,main2"]
           envFrom:
             - configMapRef:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-            - configMapRef:
-                name: minichris-docker-swift-onlyone-config
+          volumeMounts:
+            - mountPath: /var/chris
+              name: file-storage
 
         - name: cube-worker-periodic
-          image: ghcr.io/fnndsc/cube:4.0.0.pre7
+          image: ghcr.io/fnndsc/cube:4.0.0.pre12
           command: ["celery", "-A", "core", "worker", "-c", "2", "-l", "info", "-Q", "periodic"]
           envFrom:
             - configMapRef:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-            - configMapRef:
-                name: minichris-docker-swift-onlyone-config
+          volumeMounts:
+            - mountPath: /var/chris
+              name: file-storage
 
         - name: cube-celery-beat
-          image: ghcr.io/fnndsc/cube:4.0.0.pre7
+          image: ghcr.io/fnndsc/cube:4.0.0.pre12
           command: ["celery", "-A", "core", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
           envFrom:
             - configMapRef:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-            - configMapRef:
-                name: minichris-docker-swift-onlyone-config
+          volumeMounts:
+            - mountPath: /var/chris
+              name: file-storage
 
+      volumes:
+        - name: file-storage
+          persistentVolumeClaim:
+            claimName: minichris-cube-files
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minichris-cube-files
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 40Gi

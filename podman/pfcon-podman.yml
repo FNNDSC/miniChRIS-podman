@@ -43,7 +43,7 @@ spec:
               name: storebase
 
         - name: pman
-          image: ghcr.io/fnndsc/pman:5.0.0.a4
+          image: ghcr.io/fnndsc/pman:5.0.0.a5
           ports:
             - name: pman
               containerPort: 5010

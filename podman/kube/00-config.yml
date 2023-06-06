@@ -23,8 +23,8 @@ data:
   DATABASE_HOST: "minichris-postgres-pod"
   DATABASE_PORT: "5432"
   CELERY_BROKER_URL: "amqp://minichris-rabbitmq-pod:5672"
-  SWIFT_AUTH_URL: "http://minichris-swift-pod:8080/auth/v1.0"
-  SWIFT_CONTAINER_NAME: "users"
+  DEFAULT_FILE_STORAGE: "django.core.files.storage.FileSystemStorage"
+  MEDIA_ROOT: "/var/chris"
 
 ---
 
@@ -40,17 +40,3 @@ data:
   POSTGRES_DB: "chris"
   POSTGRES_USER: "chris"
   POSTGRES_PASSWORD: "chris1234"
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: minichris-docker-swift-onlyone-config
-  labels:
-    app.kubernetes.io/part-of: miniChRIS
-  annotations:
-    kubernetes.io/description: "Configuration of the swift container"
-data:
-  SWIFT_USERNAME: "chris:chris1234"
-  SWIFT_KEY: "testing"
