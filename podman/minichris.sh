@@ -31,7 +31,6 @@ function style_text () {
   printf "$1%s$RESET" "$2"
 }
 
-
 # -----------------------------------------------------------------------------
 #
 #                               HELPER FUNCTIONS
@@ -62,6 +61,19 @@ function minichris_up () {
   minichris_chrisomatic
 }
 
+function minichris_cat () {
+  cat $HERE/kube/*.yml
+  sed "s#$HARD_CODED_SOCK#$SOCK#" $HERE/pfcon-podman.yml
+}
+
+function minichris_watch_migration () {
+  if is_running $SERVER_CONTAINER; then
+    echo "$SERVER_CONTAINER is already running"
+    return
+  fi
+  watch_for_logs $INIT_CONTAINER
+}
+
 function start_cube () {
   watch_for_logs $INIT_CONTAINER &
   noisy_sh "cat $HERE/kube/*.yml | podman kube play --replace -"
@@ -69,8 +81,7 @@ function start_cube () {
 }
 
 function start_pfcon () {
-  local hard_coded_sock=/run/user/1000/podman/podman.sock
-  noisy_sh "sed \"s#$hard_coded_sock#$SOCK#\" $HERE/pfcon-podman.yml | podman kube play --replace -"
+  noisy_sh "sed \"s#$HARD_CODED_SOCK#$SOCK#\" $HERE/pfcon-podman.yml | podman kube play --replace -"
 }
 
 # Follow the logs of a container which has not yet been created and/or started.
@@ -83,10 +94,15 @@ function watch_for_logs () {
 # Poll Podman until a container is running.
 function wait_until_running () {
   while sleep 0.5; do
-    if [ -n "$(podman ps -f name=$1 -f status=running --quiet)" ]; then
+    if is_running $1; then
       break
     fi
   done
+}
+
+# Check whether a container is running
+function is_running () {
+  [ -n "$(podman ps -f name=$1 -f status=running --quiet)" ]
 }
 
 # Check whether there is a background job running.
@@ -136,6 +152,10 @@ function die () {
 
 CUBE_POD=minichris-cube-pod
 INIT_CONTAINER=minichris-cube-pod-migratedb
+SERVER_CONTAINER=minichris-cube-pod-server
+
+# A hard-coded value in ./pfcon-podman.yml which needs to be changed
+HARD_CODED_SOCK=/run/user/1000/podman/podman.sock
 
 HERE="${0%/*}"
 SOCK="$(podman info --format '{{ .Host.RemoteSocket.Path }}')"
@@ -147,9 +167,11 @@ $(style_text "$BOLD$UNDERLINE" "Usage:") $0 [up|down|chrisomatic]
 
 $(style_text "$BOLD$UNDERLINE" "Commands:")
 
-  $(style_text "$BOLD" "up")             start or update ChRIS
-  $(style_text "$BOLD" "down")           stop ChRIS and delete data
-  $(style_text "$BOLD" "chrisomatic")    sync plugins from $HERE/chrisomatic.yml file to CUBE
+  $(style_text "$BOLD" "up")               start or update ChRIS
+  $(style_text "$BOLD" "down")             stop ChRIS and delete data
+  $(style_text "$BOLD" "cat")              generate k8s YAML for ChRIS
+  $(style_text "$BOLD" "watch-migration")  poll for output of the initContainer
+  $(style_text "$BOLD" "chrisomatic")      sync plugins from $HERE/chrisomatic.yml file to CUBE
 "
 
 
@@ -195,6 +217,12 @@ case "$subcommand" in
     ;;
   d|down )
     minichris_down
+    ;;
+  cat )
+    minichris_cat
+    ;;
+  watch-migration )
+    minichris_watch_migration
     ;;
   c|chrisomatic )
     minichris_chrisomatic

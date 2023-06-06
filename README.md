@@ -68,6 +68,41 @@ running anything which might interfere with _miniChRIS_.
 ./podman/minichris.sh down
 ```
 
+## Using Podman Desktop
+
+It is necessary to feed to Podman Desktop a single YAML file defining all _ChRIS_ resources.
+The YAML file is produced by the command `./minichris.sh cat`.
+
+```shell
+./podman/minichris.sh cat > chris-all-in-one.yml
+```
+
+In the sidebar of Podman Desktop, click the "Containers" icon and then
+in the top-right, click "Play Kubernetes YAML". Select the `chris-all-in-one.yml`
+file and then click "Play."
+
+![Screenshot of Podman Desktop: selecting a file](podman/Screenshots/podman_desktop_select_file.png)
+
+Wait 1-5 minutes for _ChRIS_ to start up. Optionally, you can monitor the progress from a terminal with the command
+
+```shell
+./podman/minichris.sh watch-migration
+```
+
+When it's done, return the Containers screen and you should see
+_ChRIS_ containers running.
+
+![Screenshot of Podman Desktop: running _ChRIS_ containers](podman/Screenshots/podman_desktop_created_containers.png)
+
+At this point _ChRIS_ is running, but it is empty. To add users and plugins to _ChRIS_,
+go back to the terminal and run
+
+```shell
+podman/minichris.sh chrisomatic
+```
+
+Finally, you're ready to log in to http://localhost:8020 with username `chris`, password `chris1234`.
+
 ## What to expect: performance
 
 On a fast computer with good internet speed, running `./podman/minichris.sh up`
@@ -82,10 +117,8 @@ WIP
 
 A default superuser `chris:chris1234` is created.
 You can access the admin dashboard at
-http://localhost:8000/chris-admin/.
-
-Head over to https://github.com/FNNDSC/ChRIS_ui#readme
-for how to run the user interface.
+http://localhost:8000/chris-admin/
+and the *ChRIS\_ui* at http://localhost:8020
 
 ### Adding Plugins
 
@@ -168,6 +201,15 @@ host port.
 - https://docs.podman.io/en/stable/markdown/podman-kube-play.1.html#podman-kube-play-support
 - https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md
 - https://github.com/FNNDSC/miniChRIS-k8s/wiki/Podman-initContainers
+
+#### Nuking miniChRIS on Podman
+
+In case `./podman/minichris.sh down` does not work, run:
+
+```shell
+podman pod rm -af
+podman volume prune -f
+```
 
 ## Contact
 
