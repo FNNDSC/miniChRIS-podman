@@ -26,7 +26,7 @@ See also: https://github.com/FNNDSC/miniChRIS-docker
 ### System Requirements
 
 _miniChRIS-k8s_ requires Podman version 4.3 or above.
-We aim to support "out-of-the-box" setups of rootless Podman (using slirp4netns).
+We aim to support "out-of-the-box" setups of rootless Podman (using slirp4netns and aardvark-dns).
 
 Supported OS: Fedora Silverblue 37, Ubuntu 22.04, Arch Linux
 
@@ -40,7 +40,7 @@ On Arch Linux, please consult the wiki: https://wiki.archlinux.org/title/Podman
 Here's what worked for me (possibly helpful, definitely outdated info)
 
 ```shell
-sudo pacman -Syu podman
+sudo pacman -Syu podman aardvark-dns
 sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $USER
 ```
 
