@@ -103,6 +103,19 @@ podman/minichris.sh chrisomatic
 
 Finally, you're ready to log in to http://localhost:8020 with username `chris`, password `chris1234`.
 
+## Using Quadlet
+
+```shell
+systemctl --user start podman.service
+./podman/minichris.sh cat > ~/.config/containers/systemd/minichris-aio.yml
+cp podman/quadlet/minichris.kube ~/.config/containers/systemd/minichris.kube
+systemctl --user daemon-reload
+systemctl --user start minichris.service
+```
+
+> [!WARNING]  
+> Friendly reminder to not use _miniChRIS_ in production.
+
 ## What to expect: performance
 
 On a fast computer with good internet speed, running `./podman/minichris.sh up`

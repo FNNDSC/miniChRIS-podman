@@ -1,0 +1,12 @@
+[Unit]
+Description=miniChRIS
+Documentation=https://github.com/FNNDSC/miniChRIS-k8s/#using-quadlet
+After=local-fs.target
+Requires=podman.service
+
+[Kube]
+Yaml=minichris-aio.yml
+
+[Install]
+# Start by default on boot
+WantedBy=multi-user.target default.target
