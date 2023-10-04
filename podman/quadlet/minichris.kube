@@ -1,6 +1,6 @@
 [Unit]
 Description=miniChRIS
-Documentation=https://github.com/FNNDSC/miniChRIS-k8s/#using-quadlet
+Documentation=https://github.com/FNNDSC/miniChRIS-podman/#using-quadlet
 After=local-fs.target
 Requires=podman.service
 

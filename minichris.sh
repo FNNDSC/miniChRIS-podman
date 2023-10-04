@@ -48,11 +48,11 @@ function minichris_chrisomatic () {
     --security-opt label=disable \
     -v "\"$(realpath "$HERE")/chrisomatic.yml:/chrisomatic.yml:ro\"" \
     -v "$SOCK:/var/run/docker.sock:rw" \
-    ghcr.io/fnndsc/chrisomatic:0.4.1 chrisomatic "$@"
+    ghcr.io/fnndsc/chrisomatic:0.5.0 chrisomatic "$@"
 }
 
 function minichris_down () {
-  noisy_sh "cat $HERE/kube/*.yml $HERE/pfcon-podman.yml | exec podman kube down --force -"
+  noisy_sh "cat $HERE/podman/kube/*.yml $HERE/podman/pfcon-podman.yml | exec podman kube down --force -"
 }
 
 function minichris_up () {
@@ -62,8 +62,8 @@ function minichris_up () {
 }
 
 function minichris_cat () {
-  cat $HERE/kube/*.yml
-  sed "s#$HARD_CODED_SOCK#$SOCK#" $HERE/pfcon-podman.yml
+  cat $HERE/podman/kube/*.yml
+  sed "s#$HARD_CODED_SOCK#$SOCK#" $HERE/podman/pfcon-podman.yml
 }
 
 function minichris_watch_migration () {
@@ -76,12 +76,12 @@ function minichris_watch_migration () {
 
 function start_cube () {
   watch_for_logs $INIT_CONTAINER &
-  noisy_sh "cat $HERE/kube/*.yml | podman kube play --replace -"
+  noisy_sh "cat $HERE/podman/kube/*.yml | podman kube play --replace -"
   reap_background_wait
 }
 
 function start_pfcon () {
-  noisy_sh "sed \"s#$HARD_CODED_SOCK#$SOCK#\" $HERE/pfcon-podman.yml | podman kube play --replace -"
+  noisy_sh "sed \"s#$HARD_CODED_SOCK#$SOCK#\" $HERE/podman/pfcon-podman.yml | podman kube play --replace -"
 }
 
 # Follow the logs of a container which has not yet been created and/or started.

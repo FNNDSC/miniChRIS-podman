@@ -31,7 +31,7 @@ spec:
       name: minichris-cube
       labels:
         app: minichris-cube
-        org.chrisproject.role: "ChRIS ultron backEnd"  # selector used by chrisomatic
+        org.chrisproject.role: "ChRIS_ultron_backEnd"  # selector used by chrisomatic
     spec:
       initContainers:
         - name: migratedb

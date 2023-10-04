@@ -1,4 +1,4 @@
-# Test miniChRIS-k8s with miniChRIS-docker's test suite
+# Test miniChRIS-podman with miniChRIS-docker's test suite
 
 name: CI
 
@@ -42,12 +42,12 @@ jobs:
       - name: Podman Info
         run: podman info
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Start CUBE
-        run: ./podman/minichris.sh up
+        run: ./minichris.sh up
 
       - name: Checkout miniChRIS-docker
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: FNNDSC/miniChRIS-docker
           path: ./miniChRIS-docker
