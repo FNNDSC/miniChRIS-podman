@@ -67,4 +67,4 @@ jobs:
 
           exit $rc
       - name: Stop CUBE
-        run: ./podman/minichris.sh down
+        run: ./minichris.sh down
