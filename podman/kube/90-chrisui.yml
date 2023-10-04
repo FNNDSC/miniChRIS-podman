@@ -7,23 +7,22 @@ kind: Deployment
 metadata:
   name: minichris-chrisui
   labels:
-    app: minichris-chrisui
+    app.kubernetes.io/name: minichris-ui
     app.kubernetes.io/component: frontend
     app.kubernetes.io/part-of: miniChRIS
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: minichris-chrisui
+      app.kubernetes.io/name: minichris-ui
   template:
     metadata:
-      name: minichris-chrisui
       labels:
-        app: minichris-chrisui
+        app.kubernetes.io/name: minichris-ui
     spec:
       containers:
         - name: chrisui
-          image: ghcr.io/fnndsc/chris_ui:20230523.257-cbc71ea8
+          image: ghcr.io/fnndsc/chris_ui:20231003.270-01f1a863
           args: ["sirv", "--host", "--single"]
           ports:
           - containerPort: 3000

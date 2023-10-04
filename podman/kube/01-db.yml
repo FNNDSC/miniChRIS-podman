@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: minichris-postgres
   labels:
-    app: minichris-postgres
+    app.kubernetes.io/name: minichris-db
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: miniChRIS
   annotations:
@@ -15,23 +15,21 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: minichris-postgres
+      app.kubernetes.io/name: minichris-db
   template:
     metadata:
-      name: minichris-postgres
       labels:
-        app: minichris-postgres
+        app.kubernetes.io/name: minichris-db
     spec:
       containers:
         - name: postgres
-          image: docker.io/library/postgres:13
+          image: docker.io/library/postgres:16
           envFrom:
             - configMapRef:
                 name: minichris-db-config
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql
-
+              mountPath: /var/lib/postgresql/data
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -47,4 +45,4 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 128Mi

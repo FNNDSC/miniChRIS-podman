@@ -17,14 +17,13 @@ data:
   DJANGO_CORS_ALLOWED_ORIGINS: ""
   DJANGO_SECURE_PROXY_SSL_HEADER: ""
   DJANGO_USE_X_FORWARDED_HOST: "false"
-  STATIC_ROOT: "/home/localuser/mod_wsgi-0.0.0.0:8000/htdocs/static/"
   AUTH_LDAP: "false"
   CHRIS_STORE_URL: "https://chrisstore.co/api/v1/"
   DATABASE_HOST: "minichris-postgres-pod"
   DATABASE_PORT: "5432"
   CELERY_BROKER_URL: "amqp://minichris-rabbitmq-pod:5672"
-  DEFAULT_FILE_STORAGE: "django.core.files.storage.FileSystemStorage"
-  MEDIA_ROOT: "/var/chris"
+  STORAGE_ENV: "filesystem"
+  MEDIA_ROOT: "/data"
 
 ---
 

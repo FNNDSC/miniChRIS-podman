@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: minichris-rabbitmq
   labels:
-    app: minichris-rabbitmq
+    app.kubernetes.io/name: minichris-rabbitmq
     app.kubernetes.io/component: queue
     app.kubernetes.io/part-of: miniChRIS
   annotations:
@@ -14,13 +14,34 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: minichris-rabbitmq
+      app.kubernetes.io/name: minichris-rabbitmq
   template:
     metadata:
-      name: minichris-rabbitmq
       labels:
-        app: minichris-rabbitmq
+        app.kubernetes.io/name: minichris-rabbitmq
     spec:
       containers:
         - name: rabbitmq
           image: docker.io/library/rabbitmq:3
+          ports:
+            - name: amqp
+              containerPort: 5672
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/rabbitmq
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minichris-rabbitmq-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minichris-rabbitmq-data
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 128Mi
