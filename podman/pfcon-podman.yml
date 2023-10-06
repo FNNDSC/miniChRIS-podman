@@ -7,7 +7,7 @@ kind: Deployment
 metadata:
   name: minichris-pfcon
   labels:
-    app: minichris-pfcon
+    app.kubernetes.io/name: minichris-pfcon
     app.kubernetes.io/component: computeresource
     app.kubernetes.io/part-of: miniChRIS
   annotations:
@@ -16,16 +16,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: minichris-pfcon
+      app.kubernetes.io/name: minichris-pfcon
   template:
     metadata:
       name: minichris-pfcon
       labels:
-        app: minichris-pfcon
+        app.kubernetes.io/name: minichris-pfcon
     spec:
       containers:
         - name: pfcon
-          image: ghcr.io/fnndsc/pfcon:5.0.0
+          image: ghcr.io/fnndsc/pfcon:5.2.2
           ports:
             - name: pfcon
               containerPort: 5005
@@ -38,12 +38,18 @@ spec:
               value: pfcon
             - name: PFCON_PASSWORD
               value: pfcon1234
+            - name: PFCON_INNETWORK
+              value: "true"
+            - name: STORAGE_ENV
+              value: filesystem
+            - name: STOREBASE_MOUNT
+              value: /var/local/storeBase
           volumeMounts:
             - mountPath: /var/local/storeBase
-              name: storebase
+              name: cube-files
 
         - name: pman
-          image: ghcr.io/fnndsc/pman:5.0.0.a5
+          image: ghcr.io/fnndsc/pman:6.0.1
           ports:
             - name: pman
               containerPort: 5010
@@ -53,10 +59,12 @@ spec:
             - name: STORAGE_TYPE
               value: docker_local_volume
             - name: VOLUME_NAME
-              value: minichris-storebase
+              value: minichris-cube-files
             - name: STOREBASE
             - name: SECRET_KEY
               value: secret
+            - name: REMOVE_JOBS
+              value: "yes"
           volumeMounts:
             - mountPath: /var/run/docker.sock
               name: podman-socket
@@ -68,9 +76,9 @@ spec:
           type: spc_t
 
       volumes:
-        - name: storebase
+        - name: cube-files
           persistentVolumeClaim:
-            claimName: minichris-storebase
+            claimName: minichris-cube-files
         - name: podman-socket
           hostPath:
             # pman needs to run containers, and it does so by communicating with the Podman socket.
@@ -79,16 +87,3 @@ spec:
             # The hard-coded path below is replaced with the user-specific value by minichris.sh
             path: /run/user/1000/podman/podman.sock
             type: Socket
-
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: minichris-storebase
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 20Gi
