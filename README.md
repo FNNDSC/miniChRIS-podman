@@ -5,6 +5,8 @@
 
 Run [_ChRIS_](https://chrisproject.org/) using [Podman](https://podman.io).
 
+Documentation: https://chrisproject.org/docs/run/podman
+
 ## Project Goals
 
 _miniChRIS-podman_ provides YAML files which can be read by `podman play kube` to run _ChRIS_.
