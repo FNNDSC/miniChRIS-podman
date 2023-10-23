@@ -3,6 +3,8 @@ Description=miniChRIS
 Documentation=https://github.com/FNNDSC/miniChRIS-podman/#using-quadlet
 After=local-fs.target
 Requires=podman.service
+After=NetworkManager-wait-online.service
+Requires=NetworkManager-wait-online.service
 
 [Kube]
 Yaml=minichris-aio.yml
