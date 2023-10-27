@@ -13,7 +13,7 @@
 __REAL_TPUT=$(which tput)
 
 function tput () {
-  if ! [ -v CI ] && [[ "$TERM" = xterm* ]]; then
+  if [ -z "$CI" ] && [[ "$TERM" = xterm* ]]; then
     $__REAL_TPUT "$@"
   fi
 }
@@ -39,7 +39,7 @@ function style_text () {
 
 
 function minichris_chrisomatic () {
-  if ! [ -v CI ]; then
+  if [ -z "$CI" ]; then
     tty_flags=-it
   fi
 
