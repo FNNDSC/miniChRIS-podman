@@ -29,6 +29,7 @@ spec:
           ports:
             - name: pfcon
               containerPort: 5005
+              hostPort: 5005
           env:
             - name: COMPUTE_SERVICE_URL
               value: http://localhost:5010/api/v1/
@@ -64,7 +65,9 @@ spec:
             - name: SECRET_KEY
               value: secret
             - name: REMOVE_JOBS
-              value: "yes"
+              value: "no"
+            - name: SHM_SIZE
+              value: 1024
           volumeMounts:
             - mountPath: /var/run/docker.sock
               name: podman-socket
