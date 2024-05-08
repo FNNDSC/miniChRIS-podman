@@ -43,7 +43,7 @@ function minichris_chrisomatic () {
     tty_flags=-it
   fi
 
-  noisy_sh podman run --rm $tty_flags \
+  noisy_sh podman run --rm $tty_flags --restart=no \
     --pod $CUBE_POD \
     --security-opt label=disable \
     -v "\"$(realpath "$HERE")/chrisomatic.yml:/chrisomatic.yml:ro\"" \
