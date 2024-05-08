@@ -50,7 +50,7 @@ spec:
               name: cube-files
 
         - name: pman
-          image: ghcr.io/fnndsc/pman:6.1.0
+          image: ghcr.io/fnndsc/pman:6.2.0
           ports:
             - name: pman
               containerPort: 5010
