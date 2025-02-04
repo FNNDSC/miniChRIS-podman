@@ -10,35 +10,10 @@ on:
 
 jobs:
   test-podman:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-        # Pre-installed Podman version is version 3, we need to install version 4.
-      - name: Install latest Podman
-        run: |
-          # https://github.com/containers/podman/blob/main/troubleshooting.md#26-running-containers-with-resource-limits-fails-with-a-permissions-error
-          # In Github Actions, we can't just log in and out so we'll have to manipulate /sys files.
-          # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/assembly_using-cgroupfs-to-manually-manage-cgroups_managing-monitoring-and-updating-the-kernel
-          sudo sh -c "
-            echo '+cpu +io +memory +pids' > /sys/fs/cgroup/user.slice/cgroup.subtree_control
-            echo '+cpu +io +memory +pids' >> /sys/fs/cgroup/user.slice/user-$(id -u).slice/cgroup.subtree_control
-            echo '+cpu +io +memory +pids' >> /sys/fs/cgroup/user.slice/user-$(id -u).slice/user@$(id -u).service/cgroup.subtree_control
-          "
-
-          # https://podman.io/getting-started/installation#ubuntu
-          sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/Release.key \
-            | gpg --dearmor \
-            | sudo tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg]\
-              https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/ /" \
-            | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
-          sudo apt-get update
-          sudo apt-get -y install podman
-
-          systemctl --user daemon-reload
-          systemctl --user restart podman.service
-
+      - name: Start Podman Daemon
+        run: systemctl --user start podman.service
       - name: Podman Info
         run: podman info
       - name: Checkout
@@ -51,6 +26,7 @@ jobs:
         with:
           repository: FNNDSC/miniChRIS-docker
           path: ./miniChRIS-docker
+          ref: next
       - name: Test
         run: |
           set +e
