@@ -22,13 +22,12 @@ spec:
     spec:
       containers:
         - name: chrisui
-          image: ghcr.io/fnndsc/chris_ui:20240507.446-767958ca
-          args: ["sirv", "--host", "--single"]
+          image: ghcr.io/fnndsc/chris_ui:4b813b0
           ports:
-          - containerPort: 3000
+          - containerPort: 80
             hostPort: 8020
           env:
-            - name: REACT_APP_CHRIS_UI_URL
+            - name: CHRIS_UI_URL
               value: http://localhost:8000/api/v1/
-            - name: REACT_APP_PFDCM_URL
+            - name: PFDCM_URL
               value: http://localhost:4005/

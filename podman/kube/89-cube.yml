@@ -38,6 +38,15 @@ spec:
         kubernetes.io/description: "ChRIS_ultron_backEnd in a single replica of a single pod."
     spec:
       initContainers:
+        - name: chown-volume
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
+          command: ["chmod", "g+rwx", "/data"]
+          volumeMounts:
+            - mountPath: /data
+              name: file-storage
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
         - name: db-ready
           image: docker.io/library/postgres:16
           command:
@@ -45,68 +54,48 @@ spec:
             - -c
             - until pg_isready -U chris -h minichris-postgres-pod -p 5432; do sleep 1; done
         - name: migratedb
-          image: ghcr.io/fnndsc/cube:5.0.0
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
           command: ["python", "manage.py", "migrate", "--noinput"]
-          envFrom:
+          envFrom: &ENV_FROM
             - configMapRef:
                 name: minichris-cube-config
             - configMapRef:
                 name: minichris-db-config
-          volumeMounts:
+          volumeMounts: &VOLUMES
             - mountPath: /data
               name: file-storage
       containers:
         - name: server
-          image: ghcr.io/fnndsc/cube:5.0.0
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
+          command: ["granian", "--host", "0.0.0.0", "--port", "8000", "--interface", "asginl", "config.asgi:application"]
           ports:
             - name: http
               containerPort: 8000
               hostPort: 8000
-          envFrom:
-            - configMapRef:
-                name: minichris-cube-config
-            - configMapRef:
-                name: minichris-db-config
-          volumeMounts:
-            - mountPath: /data
-              name: file-storage
-
+          envFrom: *ENV_FROM
+          volumeMounts: *VOLUMES
+          livenessProbe:
+            httpGet:
+              path: /api/v1/users/
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
         - name: cube-worker
-          image: ghcr.io/fnndsc/cube:5.0.0
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
           command: ["celery", "-A", "core", "worker", "-c", "4", "-l", "info", "-Q", "main1,main2"]
-          envFrom:
-            - configMapRef:
-                name: minichris-cube-config
-            - configMapRef:
-                name: minichris-db-config
-          volumeMounts:
-            - mountPath: /data
-              name: file-storage
-
+          envFrom: *ENV_FROM
+          volumeMounts: *VOLUMES
         - name: cube-worker-periodic
-          image: ghcr.io/fnndsc/cube:5.0.0
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
           command: ["celery", "-A", "core", "worker", "-c", "2", "-l", "info", "-Q", "periodic"]
-          envFrom:
-            - configMapRef:
-                name: minichris-cube-config
-            - configMapRef:
-                name: minichris-db-config
-          volumeMounts:
-            - mountPath: /data
-              name: file-storage
-
+          envFrom: *ENV_FROM
+          volumeMounts: *VOLUMES
         - name: cube-celery-beat
-          image: ghcr.io/fnndsc/cube:5.0.0
+          image: ghcr.io/fnndsc/cube:6.3.0-beta.7
           command: ["celery", "-A", "core", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
-          envFrom:
-            - configMapRef:
-                name: minichris-cube-config
-            - configMapRef:
-                name: minichris-db-config
-          volumeMounts:
-            - mountPath: /data
-              name: file-storage
-
+          envFrom: *ENV_FROM
+          volumeMounts: *VOLUMES
       volumes:
         - name: file-storage
           persistentVolumeClaim:

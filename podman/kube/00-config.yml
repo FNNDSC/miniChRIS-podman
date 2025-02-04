@@ -9,6 +9,7 @@ metadata:
   annotations:
     kubernetes.io/description: "Configuration of ChRIS backend production mode, security options, and secrets"
 data:
+  CHRIS_SUPERUSER_PASSWORD: "chris1234"
   DJANGO_SETTINGS_MODULE: "config.settings.production"
   CUBE_CELERY_POLL_INTERVAL: "5.0"
   DJANGO_ALLOWED_HOSTS: "*"
@@ -18,11 +19,14 @@ data:
   DJANGO_SECURE_PROXY_SSL_HEADER: ""
   DJANGO_USE_X_FORWARDED_HOST: "false"
   AUTH_LDAP: "false"
-  CHRIS_STORE_URL: "https://chrisstore.co/api/v1/"
+  DISABLE_USER_ACCOUNT_CREATION: "false"
+  CHRIS_STORE_URL: "https://cube.chrisproject.org/api/v1/"
   DATABASE_HOST: "minichris-postgres-pod"
   DATABASE_PORT: "5432"
   CELERY_BROKER_URL: "amqp://minichris-rabbitmq-pod:5672"
-  STORAGE_ENV: "filesystem"
+  NATS_ADDRESS: "nats://minichris-nats-pod:4222"
+  PFDCM_ADDRESS: "http://localhost:4005"
+  STORAGE_ENV: "fslink"
   MEDIA_ROOT: "/data"
 
 ---

@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: pfcon
-          image: ghcr.io/fnndsc/pfcon:5.2.2
+          image: ghcr.io/fnndsc/pfcon:5.2.3
           ports:
             - name: pfcon
               containerPort: 5005
@@ -42,7 +42,7 @@ spec:
             - name: PFCON_INNETWORK
               value: "true"
             - name: STORAGE_ENV
-              value: filesystem
+              value: fslink
             - name: STOREBASE_MOUNT
               value: /var/local/storeBase
           volumeMounts:

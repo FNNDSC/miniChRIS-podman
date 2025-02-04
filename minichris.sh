@@ -48,7 +48,7 @@ function minichris_chrisomatic () {
     --security-opt label=disable \
     -v "\"$(realpath "$HERE")/chrisomatic.yml:/chrisomatic.yml:ro\"" \
     -v "$SOCK:/var/run/docker.sock:rw" \
-    ghcr.io/fnndsc/chrisomatic:0.8.2 chrisomatic "$@"
+    ghcr.io/fnndsc/chrisomatic:1.0.0 chrisomatic "$@"
 }
 
 function minichris_down () {
